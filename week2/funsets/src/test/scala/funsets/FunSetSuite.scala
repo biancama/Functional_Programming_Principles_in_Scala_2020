@@ -1,56 +1,17 @@
 package funsets
 
-import org.scalatest.FunSuite
-
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
+import org.junit._
 
 /**
- * This class is a test suite for the methods in object FunSets. To run
- * the test suite, you can either:
- *  - run the "test" command in the SBT console
- *  - right-click the file in eclipse and chose "Run As" - "JUnit Test"
+ * This class is a test suite for the methods in object FunSets.
+ *
+ * To run this test suite, start "sbt" then run the "test" command.
  */
-@RunWith(classOf[JUnitRunner])
-class FunSetSuite extends FunSuite {
-
-  /**
-   * Link to the scaladoc - very clear and detailed tutorial of FunSuite
-   *
-   * http://doc.scalatest.org/1.9.1/index.html#org.scalatest.FunSuite
-   *
-   * Operators
-   *  - test
-   *  - ignore
-   *  - pending
-   */
-
-  /**
-   * Tests are written using the "test" operator and the "assert" method.
-   */
-  // test("string take") {
-  //   val message = "hello, world"
-  //   assert(message.take(5) == "hello")
-  // }
-
-  /**
-   * For ScalaTest tests, there exists a special equality operator "===" that
-   * can be used inside "assert". If the assertion fails, the two values will
-   * be printed in the error message. Otherwise, when using "==", the test
-   * error message will only say "assertion failed", without showing the values.
-   *
-   * Try it out! Change the values so that the assertion fails, and look at the
-   * error message.
-   */
-  // test("adding ints") {
-  //   assert(1 + 2 === 3)
-  // }
-
+class FunSetSuite {
 
   import FunSets._
 
-  test("contains is implemented") {
+  @Test def `contains is implemented`: Unit = {
     assert(contains(x => true, 100))
   }
 
@@ -80,13 +41,13 @@ class FunSetSuite extends FunSuite {
   }
 
   /**
-   * This test is currently disabled (by using "ignore") because the method
+   * This test is currently disabled (by using @Ignore) because the method
    * "singletonSet" is not yet implemented and the test would fail.
    *
-   * Once you finish your implementation of "singletonSet", exchange the
-   * function "ignore" by "test".
+   * Once you finish your implementation of "singletonSet", remvoe the
+   * @Ignore annotation.
    */
-  test("singletonSet(1) contains 1") {
+   @Test def `singleton set one contains one`: Unit = {
 
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -101,7 +62,7 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  test("union contains all elements of each set") {
+  @Test def `union contains all elements of each set`: Unit = {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
@@ -110,58 +71,40 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-
-  test("intersection contains only common elements of each set") {
+  @Test def `The set of all even numbers should contain only even numbers`: Unit = {
     new TestSets {
-      val s4 = union(s1, s2)
-      val s = intersect(s4, s1)
-      assert(contains(s, 1), "intersect 1")
-      assert(!contains(s, 2), "intersect 2")
-      assert(!contains(s, 3), "intersect 3")
+      val s4 = singletonSet(4)
+      val s5 = singletonSet(5)
+
+      val s_1 = union(s1, s2)
+      val s_2 = union(s3, s4)
+      val s_3 = union(s_1, s_2)
+      val s_4 = union(s_3, s5)
+      val s = filter(s_4, x => x % 2 == 1)
+
+      assert(contains(s, 1), "Union 1")
+      assert(!contains(s, 2), "Union 2")
+      assert(contains(s, 3), "Union 3")
+      assert(!contains(s, 4), "Union 4")
+      assert(contains(s, 5), "Union 5")
     }
   }
 
 
-  test("diff contains only common elements of first set. but not aof the second") {
+  @Test def `The for all even numbers should contain only even numbers`: Unit = {
     new TestSets {
-      val s4 = union(s1, s2)
-      val s = diff(s4, s1)
-      assert(!contains(s, 1), "diff 1")
-      assert(contains(s, 2), "diff 2")
-      assert(!contains(s, 3), "diff 3")
-    }
-  }
 
-  test("Filter all odd number") {
-    new TestSets {
-      val s4 = union(s1, s2)
-      val s5 = union(s4, s3)
+      val s5 = singletonSet(5)
+      val s7 = singletonSet(7)
 
-      val s = filter(s5, x => x % 2 != 0)
-      assert(contains(s, 1), "diff 1")
-      assert(!contains(s, 2), "diff 2")
-      assert(contains(s, 3), "diff 3")
+      val s_1 = union(s1, s3)
+      val s_2 = union(s5, s7)
+      val s_3 = union(s_1, s_2)
+      assert(forall(s_3, x => x%2 == 1), "for all odd")
+
     }
   }
 
 
-  test("map") {
-    new TestSets {
-      val s01 = singletonSet(2)
-      val s02 = singletonSet(4)
-      val s03 = singletonSet(8)
-      val s04 = union(s01, s02)
-      val s05 = union(s04, s03)
-
-
-      val s = map(s05, x => x * x)
-      assert(contains(s, 4), "map 1")
-      assert(!contains(s, 8), "map 2")
-      assert(contains(s, 16), "map 3")
-      assert(contains(s, 64), "map 3")
-    }
-  }
-
-
-
+  @Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
 }
