@@ -74,8 +74,7 @@ trait Huffman extends HuffmanInterface {
     def times(chars: List[Char], acc: List[(Char, Int)]) :List[(Char, Int)] = {
       if (chars.isEmpty) acc
       else {
-        val filteredChars =  chars.filter(c => c == chars.head)
-        val leftOverChars =  chars.filterNot(c => c == chars.head)
+        val (filteredChars, leftOverChars) =  chars.partition(c => c == chars.head)
         times(leftOverChars, (chars.head, filteredChars.length) :: acc)
       }
     }

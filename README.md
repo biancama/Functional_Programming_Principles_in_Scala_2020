@@ -87,3 +87,11 @@ it will throw an exception . so if `List[NonEmpty] <: List[IntSet]` it will viol
 so the method prepend should be `prepend [U >: T] (elem: U): List[U] = new Cons(elem, this)`
 
 
+# pattern matching on a pair
+```
+{ case p1 => e1...   case pn => en }
+```
+is equivalent to 
+```
+x => x match { case p1 => e1...   case pn => en }
+```
